@@ -55,38 +55,38 @@ def process_image(request):
 )
 
 
-        # Use your API key securely, make sure it's set in environment variables
-        gemini_api_key = 'api-key' # Secure your API key
+       
+        gemini_api_key = 'api-key' # your API key
         if not gemini_api_key:
             return JsonResponse({'error': 'API key is missing'}, status=400)
 
-        # Configure the SDK with your API key
+        
         genai.configure(api_key=gemini_api_key)
         generation_config= {"temperature": 0}
-        # Initialize the Gemini model
+      
         model = genai.GenerativeModel( model_name="gemini-2.0-flash-exp",generation_config=generation_config)
 
         try:
-            # Upload the image using the Gemini File API
+            # Upload the image
             file_reference = genai.upload_file(saved_path)
             print(f"Uploaded file reference: {file_reference}")
 
-            # Send the file reference and the prompt to the model
+            # Send the file
             response = model.generate_content(
                 [file_reference, "\n\n", prompt]
             )
 
-            # Remove the saved image after the request is completed
+            # Remove the saved image 
             os.remove(saved_path)
 
             # Extract the text from the response
-            response_text = response.text  # Assuming the response has a 'text' attribute
+            response_text = response.text  
 
-            # Return the extracted content as a JSON response
+            # Return  content as a JSON 
             return JsonResponse({'response': response_text})
 
         except Exception as e:
-            # Handle errors, such as connection issues or image processing failures
+            # Handle errors
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
